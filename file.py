@@ -1,10 +1,12 @@
 from operator import truediv
 
 from pypdf import PdfReader
+from ai import get_new_file_name
 
 import docx
 import random
 import os
+import json
 
 
 class File:
@@ -71,10 +73,14 @@ class File:
     def rename(self):
         text = self._read()
         if text != "":
-            #TODO: ai read text, then provide name
-            new_file_name = "test docx 1 page.docx"
+            #To convert a string containing a JSON object into a real JSON object in Python
+            response = json.loads(get_new_file_name(text))
+            new_file_name = f"{response['filename']}.{self.file_extension}"
             #Get directory without file basename
             directory = os.path.dirname(self.file_path)
             new_file = os.path.join(directory, new_file_name)
             os.rename(self.file_path, new_file)
             print("The file was renamed")
+
+file = File(file_path=r"C:\Users\Tamerlan\Desktop\Programming\For testing\files\test docx 1 page.docx")
+file.rename()

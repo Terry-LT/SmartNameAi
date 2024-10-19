@@ -13,5 +13,5 @@ Save time, stay organized, and let AI do the thinking for you! 🧑‍💻⚙️
 3. Install Ollama with llama3.1 model
 
 # TODO
-1. Implement AI
+1. <s> Implement AI </s>
 
