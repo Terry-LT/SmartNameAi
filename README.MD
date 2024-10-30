@@ -11,7 +11,9 @@ Save time, stay organized, and let AI do the thinking for you! 🧑‍💻⚙️
 2. Install required packages <br>
 ```pip3 install requirements.txt```
 3. Install Ollama with llama3.1 model
+4. Install Ollama with llava model
 
 # TODO
 1. <s> Implement AI </s>
+2. <s> Use AI to name image files </s>
 

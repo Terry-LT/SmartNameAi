@@ -1,13 +1,17 @@
-from operator import truediv
-
+from message import print_alert_message, print_warning_message
+from validate import is_image
 from pypdf import PdfReader
-from ai import get_new_file_name
+from PIL import Image
+
+from ai import get_new_file_name, get_new_file_name_for_image
 
 import docx
 import random
 import os
 import json
 
+supported_extensions = [".txt", ".pdf", ".docx"]
+supported_image_extensions = [ext for ext, format_ in Image.registered_extensions().items() if format_ in Image.OPEN]
 
 class File:
     file_path = ""
@@ -18,7 +22,7 @@ class File:
             self.file_extension = os.path.splitext(file_path)[1]
             self.file_path = file_path
         else:
-            print("The file does not exist.")
+            print_warning_message("The file does not exist.")
             self.file_exists = False
 
     def _get_random_page_number(self, stop_at):
@@ -63,24 +67,30 @@ class File:
         if self.file_exists:
             if self.file_extension == ".txt":
                 text = self._read_txt()
-            if self.file_extension == ".pdf":
+            elif self.file_extension == ".pdf":
                 text = self._read_pdf()
-            if self.file_extension == ".docx":
+            elif self.file_extension == ".docx":
                 text = self._get_docx()
+            if is_image(self.file_path):
+                text = "image"
             else:
-                print("Unfortunately, we do not support this file extension.")
+                print_warning_message("Unfortunately, we do not support this file extension.")
         return text
     def rename(self):
         text = self._read()
         if text != "":
             #To convert a string containing a JSON object into a real JSON object in Python
-            response = json.loads(get_new_file_name(text))
+            response = {}
+            if is_image(self.file_path):
+                response = {"filename":get_new_file_name_for_image(self.file_path)}
+            else:
+                response = json.loads(get_new_file_name(text))
             new_file_name = f"{response['filename']}.{self.file_extension}"
             #Get directory without file basename
             directory = os.path.dirname(self.file_path)
             new_file = os.path.join(directory, new_file_name)
-            os.rename(self.file_path, new_file)
-            print("The file was renamed")
-
-file = File(file_path=r"C:\Users\Tamerlan\Desktop\Programming\For testing\files\test docx 1 page.docx")
-file.rename()
+            try:
+                os.rename(self.file_path, new_file)
+                print_warning_message("The file was renamed")
+            except:
+                print_alert_message("An exception occurred")
